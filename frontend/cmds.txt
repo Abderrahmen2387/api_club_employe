@@ -1,0 +1,11 @@
+ng g s _services/auth
+ng g s _services/token-storage
+ng g s _services/user
+
+ng g c login
+ng g c register
+ng g c home
+ng g c profile
+ng g c board-admin
+ng g c board-moderator
+ng g c board-user

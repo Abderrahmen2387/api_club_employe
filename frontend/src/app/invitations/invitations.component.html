@@ -1,0 +1,78 @@
+<h1>Invitations</h1>
+<a (click)="openSendInvitationModal(send_invitation_modal)" class="btn btn-sm btn-primary mb-2">Send Invitation</a>
+<ng-template #send_invitation_modal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Bootstrap Modal</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">×</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="col-md-12">
+      <form *ngIf="!isSuccessful" name="form" (ngSubmit)="f.form.valid" #f="ngForm" novalidate>
+        <div class="form-group">
+          <label for="guest">To:</label>
+          <input type="text" class="form-control" name="name" [(ngModel)]="sendForm.guest" required #guest="ngModel" />
+          <div class="alert-danger" *ngIf="guest.errors && f.submitted">
+            <div *ngIf="guest.errors['required']">Guest is required</div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="comment">Comment</label>
+          <textarea type="email" class="form-control" name="email" [(ngModel)]="sendForm.comment" required #comment="ngModel"></textarea>
+          <div class="alert-danger" *ngIf="comment.errors && f.submitted">
+            <div *ngIf="comment.errors['required']">Email is required</div>
+          </div>
+        </div>
+
+        <div class="alert alert-warning" *ngIf="f.submitted && isSendFailed">
+          Signup failed!<br />{{ errorMessage }}
+        </div>
+      </form>
+    </div>
+
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-primary" (click)="sendInvitation()">Send</button>
+  </div>
+</ng-template>
+
+<table class="table table-striped">
+  <thead>
+  <tr>
+    <th style="width: 20%">Sender</th>
+    <th style="width: 20%">Guest</th>
+    <th style="width: 40%">comment</th>
+    <th style="width: 10%">Status</th>
+    <th style="width: 10%"></th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr *ngFor="let invitation of invitations" [ngClass]="getClsByStatus(invitation.status)">
+    <td>{{invitation.senderName}}</td>
+    <td>{{invitation.guestName}}</td>
+    <td>{{invitation.comment}}</td>
+    <td>{{invitation.status}}</td>
+    <td style="white-space: nowrap">
+      <button class="btn btn-sm btn-outline-danger mr-1" *ngIf="!invitation.status && isTheSender(invitation)" (click)="updateStatusInvitation(invitation.id, 'canceled')">
+        <span>Cancel</span>
+      </button>
+      <button class="btn btn-sm btn-danger mr-1" *ngIf="!invitation.status && isTheSender(invitation)" (click)="deleteInvitation(invitation.id)">
+        <span>Delete</span>
+      </button>
+      <button class="btn btn-sm btn-success mr-1" *ngIf="!invitation.status && isTheGuest(invitation)" (click)="updateStatusInvitation(invitation.id, 'accepted')">
+        <span>Accept</span>
+      </button>
+      <button class="btn btn-sm btn-warning" *ngIf="!invitation.status && isTheGuest(invitation)" (click)="updateStatusInvitation(invitation.id, 'declined')">
+        <span>Decline</span>
+      </button>
+    </td>
+  </tr>
+  <tr *ngIf="!invitations">
+    <td colspan="4" class="text-center">
+      <span class="spinner-border spinner-border-lg align-center"></span>
+    </td>
+  </tr>
+  </tbody>
+</table>
+
